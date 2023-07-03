@@ -4,14 +4,10 @@ const express=require('express');
 
 const router=express.Router();
 
-router.get('/add-product' ,(req,res,next)=>{
-    res.sendFile(path.join(__dirname, '../', 'views', 'add-product.html'))
+const productController=require('../controller/products');
 
- });
+router.get('/add-product' ,productController.getAddProducts);
 
-router.post('/add-product',(req,res,next)=>{
-    console.log(req.body);
-    res.redirect('/');
-});
+router.post('/add-product',productController.postAddProducts);
 
 module.exports=router;

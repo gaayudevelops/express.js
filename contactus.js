@@ -4,9 +4,8 @@ const express=require('express');
 
 const router=express.Router();
 
-router.get('/contactus',(req,res,next)=>{
-    res.sendFile(path.join(__dirname, '../', 'views', 'contact-us.html'));
+const contactusController=require('../controller/contactus');
 
- });
+router.get('/contactus',contactusController.getContactUs);
 
  module.exports=router;
