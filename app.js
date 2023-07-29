@@ -8,6 +8,8 @@ const sequelize= require('./util/database');
 
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-items');
 
 const app = express();
 
@@ -43,8 +45,14 @@ Product.belongsTo(User,{ constraints : true , onDelete: 'CASCADE'});  // Product
 User.hasMany(Product) // A user can have many products in his shop. The product table is therefore connected to use table with a 
 //foreign key known as 'userId'
 
+User.hasOne(Cart); // A user always has his cart
+Cart.belongsTo(User); // Inverse of the above relation where a cart is related to User such that each user has its own cart
+
+Cart.belongsToMany(Product, {through : CartItem}); // One cart can hold multiple products. Both are connected through an intermediate table 'cartItem' that contain cartId and productId 
+Product.belongsToMany(Cart, {through : CartItem}) // A product can be a part of multiple carts.
+
 sequelize
-// .sync({force  : true}) // force : true is used at the time of development as it deletes any older tables with the same names 
+//  .sync({force  : true}) // force : true is used at the time of development as it deletes any older tables with the same names 
 // and creates new tables with the specified name.
 
 .sync()
@@ -64,7 +72,13 @@ return user; // returning the user wrapped up as a promise
 
 .then(user =>{     // .then() is of the user
     // console.log(user);
-     app.listen(3000)
+    return user.createCart(); // creating a dummy cart for the user
+    
 }) 
+.then( cart=>{
+    app.listen(3000);
+    
+})
+
 
 .catch(err=> console.log(err));
